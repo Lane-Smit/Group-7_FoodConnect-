@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Lané -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -132,10 +133,10 @@
         <i class="fas fa-seedling me-2"></i>FoodConnect
       </h1>
       <div>
-        <a href="supplier-dashboard.html" class="about-link me-4">Dashboard</a>
-        <a href="index.html" class="about-link me-4">Home</a>
-        <a href="contact.html" class="about-link">Contact</a>
-        <a href="#" class="about-link">Logout</a>
+        <a href="{{ url_for('supplier_dashboard') }}" class="about-link me-4">Dashboard</a>
+        <a href="{{ url_for('index') }}" class="about-link me-4">Home</a>
+        <a href="{{ url_for('contact') }}" class="about-link me-4">Contact</a>
+        <a href="{{ url_for('logout') }}" class="about-link">Logout</a>
       </div>
     </div>
   </header>
@@ -149,6 +150,18 @@
         Search by <b>location</b>, <b>urgency</b>, or <b>food type</b> to find recipients you can assist.
       </p>
     </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
     <div class="search-box text-center mb-3">
       <input id="searchInput" type="text" class="form-control" placeholder="Search by location, urgency, or food type...">
@@ -172,46 +185,37 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Data aligned with uploadrequest.html to show how it will look more or less after Backend is added -->
-          <tr>
-            <td><button class="donate-btn" onclick="donateFood(this, 'Ubuntu Shelter', 'Vegetables')"><i class="fas fa-hand-holding-heart me-1"></i>Donate</button></td>
-            <td>Ubuntu Shelter</td>
-            <td>Pretoria</td>
-            <td>082 345 6789</td>
-            <td>Vegetables</td>
-            <td>Fresh produce for meal prep</td>
-            <td>80 kg</td>
-            <td><span class="badge urgency-high">High</span></td>
-            <td>2025-10-30</td>
-            <td>Require before 3 PM for lunch service</td>
-            <td><span class="badge bg-secondary status-badge">Pending</span></td>
-          </tr>
-          <tr>
-            <td><button class="donate-btn" onclick="donateFood(this, 'Helping Hands SA', 'Rice')"><i class="fas fa-hand-holding-heart me-1"></i>Donate</button></td>
-            <td>Helping Hands SA</td>
-            <td>Johannesburg</td>
-            <td>083 987 1122</td>
-            <td>Rice</td>
-            <td>Dry rice for soup kitchens</td>
-            <td>100 kg</td>
-            <td><span class="badge urgency-medium">Medium</span></td>
-            <td>2025-11-02</td>
-            <td>Open to deliveries over weekend</td>
-            <td><span class="badge bg-secondary status-badge">Pending</span></td>
-          </tr>
-          <tr>
-            <td><button class="donate-btn" onclick="donateFood(this, 'Grace Foundation', 'Dairy')"><i class="fas fa-hand-holding-heart me-1"></i>Donate</button></td>
-            <td>Grace Foundation</td>
-            <td>Cape Town</td>
-            <td>081 445 9987</td>
-            <td>Dairy</td>
-            <td>Milk for morning programs</td>
-            <td>50 L</td>
-            <td><span class="badge urgency-low">Low</span></td>
-            <td>2025-11-04</td>
-            <td>Prefer collection from supplier</td>
-            <td><span class="badge bg-secondary status-badge">Pending</span></td>
-          </tr>
+          {% if requests %}
+            {% for req in requests %}
+            <tr>
+              <td>
+                <button class="donate-btn" disabled><i class="fas fa-hand-holding-heart me-1"></i>Donate</button>
+              </td>
+              <td>{{ req['user_fullname'] }}</td>
+              <td>-</td>
+              <td>{{ req['contact_number'] }}</td>
+              <td>{{ req['food_type'] }}</td>
+              <td>{{ req['food_name'] }}</td>
+              <td>{{ req['quantity_needed'] }} kg</td>
+              <td>
+                {% if req['urgency_level'] == 'High' %}
+                  <span class="badge urgency-high">High</span>
+                {% elif req['urgency_level'] == 'Medium' %}
+                  <span class="badge urgency-medium">Medium</span>
+                {% else %}
+                  <span class="badge urgency-low">Low</span>
+                {% endif %}
+              </td>
+              <td>{{ req['created_at'][:10] if req['created_at'] else 'N/A' }}</td>
+              <td>-</td>
+              <td><span class="badge bg-secondary status-badge">{{ req['status'] }}</span></td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="11" class="text-center text-muted py-4">No recipient requests at the moment.</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
