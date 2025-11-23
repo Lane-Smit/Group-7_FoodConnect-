@@ -522,9 +522,119 @@ def api_kpi(user_type):
         return jsonify(kpi_data)
 
     except Exception as e:
+        return jsonify({'error': str(e)}), 500# API Endpoint: Create Food Item (JSON) - POST
+@app.route('/api/food-items/create', methods=['POST'])
+@login_required
+def api_create_food_item():
+    """API endpoint to create a new food surplus item via JSON"""
+    try:
+        # Check if user has Supplier role
+        if 'Supplier' not in session.get('roles', []):
+            return jsonify({'error': 'Unauthorized. Supplier role required.'}), 403
+
+        user_id = session['user_id']
+        data = request.get_json()
+
+        # Validate required fields
+        required_fields = ['food_type', 'food_name', 'quantity_available', 'expiry_date', 'delivery_option', 'city']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing required field: {field}'}), 400
+
+        conn = get_db_connection()
+
+        # Create or get location
+        location = conn.execute('SELECT location_id FROM locations WHERE city = ?', (data['city'],)).fetchone()
+        if location:
+            location_id = location['location_id']
+        else:
+            conn.execute('''
+                INSERT INTO locations (province, city, zip_code, street_address)
+                VALUES (?, ?, ?, ?)
+            ''', ('Not specified', data['city'], '0000', 'Not specified'))
+            location_id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
+
+        # Insert food item
+        cursor = conn.execute('''
+            INSERT INTO food_items (user_id, food_type, food_name, quantity_available,
+                                   expiry_date, delivery_option, location_id, description, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (user_id, data['food_type'], data['food_name'], float(data['quantity_available']),
+              data['expiry_date'], data['delivery_option'], location_id,
+              data.get('description', ''), 'Unselected'))
+
+        item_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'message': 'Food item created successfully',
+            'item_id': item_id
+        }), 201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# API Endpoint: Update Request Status (JSON) - PUT/POST
+@app.route('/api/requests/update/<int:request_id>', methods=['PUT', 'POST'])
+@login_required
+def api_update_request(request_id):
+    """API endpoint to update a request status via JSON"""
+    try:
+        data = request.get_json()
+
+        # Validate required field
+        if 'status' not in data:
+            return jsonify({'error': 'Missing required field: status'}), 400
+
+        # Validate status value
+        valid_statuses = ['Pending', 'Selected', 'Completed', 'Cancelled']
+        if data['status'] not in valid_statuses:
+            return jsonify({'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'}), 400
+
+        conn = get_db_connection()
+
+        # Check if request exists
+        existing_request = conn.execute('SELECT * FROM requests WHERE request_id = ?', (request_id,)).fetchone()
+        if not existing_request:
+            conn.close()
+            return jsonify({'error': 'Request not found'}), 404
+
+        # Verify user has permission (either supplier of the item or recipient of the request)
+        user_id = session['user_id']
+        food_item = conn.execute('SELECT user_id FROM food_items WHERE item_id = ?', (existing_request['item_id'],)).fetchone()
+
+        if user_id != food_item['user_id'] and user_id != existing_request['recipient_id']:
+            conn.close()
+            return jsonify({'error': 'Unauthorized. You can only update your own requests or requests for your items.'}), 403
+
+        # Update request status
+        conn.execute('UPDATE requests SET status = ? WHERE request_id = ?', (data['status'], request_id))
+        conn.commit()
+
+        # Get updated request
+        updated_request = conn.execute('''
+            SELECT r.*, f.food_name, u.user_fullname
+            FROM requests r
+            JOIN food_items f ON r.item_id = f.item_id
+            JOIN users u ON r.recipient_id = u.user_id
+            WHERE r.request_id = ?
+        ''', (request_id,)).fetchone()
+
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'message': 'Request updated successfully',
+            'request': dict(updated_request)
+        }), 200
+
+    except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    # Fix for Windows hostname Unicode issue
     import os
     os.environ['FLASK_SKIP_DOTENV'] = '1'
     app.run(host='127.0.0.1', port=5000, debug=False)
