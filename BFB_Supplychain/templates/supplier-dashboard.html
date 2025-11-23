@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Lané -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -165,9 +166,9 @@
         <i class="fas fa-seedling me-2"></i>FoodConnect
       </h1>
       <div>
-        <a href="index.html" class="about-link me-4">Home</a>
-        <a href="contact.html" class="about-link">Contact</a>
-        <a href="#" class="about-link">Logout</a>
+        <a href="{{ url_for('index') }}" class="about-link me-4">Home</a>
+        <a href="{{ url_for('contact') }}" class="about-link me-4">Contact</a>
+        <a href="{{ url_for('logout') }}" class="about-link">Logout</a>
       </div>
     </div>
   </header>
@@ -182,30 +183,42 @@
       </div>
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <!-- Inventory Stats -->
     <div class="quick-stats">
       <div class="row text-center">
         <div class="col-md-3">
           <div class="stat-box">
-            <div class="stat-number text-primary">5</div>
+            <div class="stat-number text-primary">{{ total_items }}</div>
             <p class="fw-semibold">Total Items</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="stat-box">
-            <div class="stat-number text-warning">2</div>
+            <div class="stat-number text-warning">{{ expiring_soon }}</div>
             <p class="fw-semibold">Expiring Soon</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="stat-box">
-            <div class="stat-number text-success">4</div>
+            <div class="stat-number text-success">{{ donated_today }}</div>
             <p class="fw-semibold">Donated Today</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="stat-box">
-            <div class="stat-number text-info">1</div>
+            <div class="stat-number text-info">{{ active_requests }}</div>
             <p class="fw-semibold">Active Requests</p>
           </div>
         </div>
@@ -218,19 +231,19 @@
       <div class="row g-4 text-center">
         <div class="col-md-4">
           <div class="stat-box">
-            <div class="stat-number">45</div>
+            <div class="stat-number">{{ total_items }}</div>
             <p class="fw-semibold">Surplus Items Uploaded</p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stat-box">
-            <div class="stat-number">12</div>
+            <div class="stat-number">{{ recipients_helped }}</div>
             <p class="fw-semibold">Recipients Helped</p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stat-box">
-            <div class="stat-number">320</div>
+            <div class="stat-number">{{ kg_donated }}</div>
             <p class="fw-semibold">Kg of Food Donated</p>
           </div>
         </div>
@@ -239,9 +252,10 @@
       <div class="mt-4">
         <p class="fw-semibold mb-1">Monthly Contribution Progress</p>
         <div class="progress">
-          <div class="progress-bar progress-bar-custom" style="width: 70%;"></div>
+          {% set progress_percentage = ((kg_donated / 500) * 100) | int if kg_donated else 0 %}
+          <div class="progress-bar progress-bar-custom" style="width: {{ progress_percentage }}%;"></div>
         </div>
-        <small class="text-muted">You've reached 70% of your monthly goal</small>
+        <small class="text-muted">You've reached {{ progress_percentage }}% of your monthly goal (500 kg)</small>
       </div>
     </section>
 
@@ -273,101 +287,38 @@
             </tr>
           </thead>
           <tbody id="inventoryTableBody">
-            <tr>
-              <td>Fresh Vegetables</td>
-              <td>Vegetables</td>
-              <td>80 kg</td>
-              <td>2025-11-10</td>
-              <td><span class="badge bg-success">Fresh</span></td>
-              <td>Cold Room A</td>
-              <td class="inventory-actions">
-                <button class="btn btn-sm btn-outline-warning me-1">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success">
-                  <i class="fas fa-share"></i>
-                </button>
-              </td>
-            </tr>
-            <tr class="expiry-warning">
-              <td>Bread Loaves</td>
-              <td>Bakery</td>
-              <td>50 loaves</td>
-              <td>2025-10-31</td>
-              <td><span class="badge bg-warning">Expiring Soon</span></td>
-              <td>Shelf B</td>
-              <td class="inventory-actions">
-                <button class="btn btn-sm btn-outline-warning me-1">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success">
-                  <i class="fas fa-share"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>Milk Cartons</td>
-              <td>Dairy</td>
-              <td>30 L</td>
-              <td>2025-11-03</td>
-              <td><span class="badge bg-success">Fresh</span></td>
-              <td>Fridge 2</td>
-              <td class="inventory-actions">
-                <button class="btn btn-sm btn-outline-warning me-1">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success">
-                  <i class="fas fa-share"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>Rice Bags</td>
-              <td>Grains</td>
-              <td>100 kg</td>
-              <td>2025-12-15</td>
-              <td><span class="badge bg-success">Fresh</span></td>
-              <td>Dry Storage</td>
-              <td class="inventory-actions">
-                <button class="btn btn-sm btn-outline-warning me-1">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success">
-                  <i class="fas fa-share"></i>
-                </button>
-              </td>
-            </tr>
-            <tr class="expiry-warning">
-              <td>Chicken Portions</td>
-              <td>Meat</td>
-              <td>25 kg</td>
-              <td>2025-10-29</td>
-              <td><span class="badge bg-warning">Expiring Soon</span></td>
-              <td>Freezer A</td>
-              <td class="inventory-actions">
-                <button class="btn btn-sm btn-outline-warning me-1">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success">
-                  <i class="fas fa-share"></i>
-                </button>
-              </td>
-            </tr>
+            {% if inventory %}
+              {% for item in inventory %}
+              <tr>
+                <td>{{ item['food_name'] }}</td>
+                <td>{{ item['food_type'] }}</td>
+                <td>{{ item['quantity_available'] }} kg</td>
+                <td>{{ item['expiry_date'] }}</td>
+                <td>
+                  {% if item['status'] == 'Completed' %}
+                    <span class="badge bg-success">Completed</span>
+                  {% elif item['status'] == 'Selected' %}
+                    <span class="badge bg-primary">Selected</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Available</span>
+                  {% endif %}
+                </td>
+                <td>{{ item['city'] or 'Not specified' }}</td>
+                <td class="inventory-actions">
+                  <button class="btn btn-sm btn-outline-warning me-1" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="7" class="text-center text-muted">No inventory items found. Upload your first surplus item!</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>
@@ -384,7 +335,7 @@
           <i class="fas fa-upload"></i>
           <h4>Upload Food Surplus</h4>
           <p>Share details about your available surplus food, location, and quantity.</p>
-          <a href="uploadfoodsurplus.html" class="btn">Upload Now</a>
+          <a href="{{ url_for('upload_food_surplus') }}" class="btn">Upload Now</a>
         </div>
       </div>
 
@@ -393,7 +344,7 @@
           <i class="fas fa-list"></i>
           <h4>View Recipient Needs</h4>
           <p>See what food items recipients currently require and match your supply.</p>
-          <a href="view-recipient-needs.html" class="btn">View Needs</a>
+          <a href="{{ url_for('view_recipient_needs') }}" class="btn">View Needs</a>
         </div>
       </div>
     </div>
