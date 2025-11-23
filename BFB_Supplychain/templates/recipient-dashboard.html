@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Cassidy Thersby-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -138,9 +139,9 @@
         <i class="fas fa-seedling me-2"></i>FoodConnect
       </h1>
       <div>
-        <a href="index.html" class="about-link me-4">Home</a>
-        <a href="contact.html" class="about-link">Contact</a>
-        <a href="#" class="about-link">Logout</a>
+        <a href="{{ url_for('index') }}" class="about-link me-4">Home</a>
+        <a href="{{ url_for('contact') }}" class="about-link me-4">Contact</a>
+        <a href="{{ url_for('logout') }}" class="about-link">Logout</a>
       </div>
     </div>
   </header>
@@ -155,6 +156,18 @@
       </div>
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <!-- Impact Overview -->
     <section class="dashboard-card mb-5">
       <h4 class="text-center mb-4">
@@ -163,19 +176,19 @@
       <div class="row g-4 text-center">
         <div class="col-md-4">
           <div class="stat-box">
-            <div class="stat-number" id="requestsUploaded">45</div>
+            <div class="stat-number" id="requestsUploaded">{{ requests_uploaded }}</div>
             <p class="fw-semibold">Requests Uploaded</p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stat-box">
-            <div class="stat-number" id="recipientsSupported">32</div>
-            <p class="fw-semibold">Recipients Supported</p>
+            <div class="stat-number" id="recipientsSupported">{{ recipients_supported }}</div>
+            <p class="fw-semibold">Suppliers Connected</p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stat-box">
-            <div class="stat-number" id="foodReceived">285</div>
+            <div class="stat-number" id="foodReceived">{{ food_received }}</div>
             <p class="fw-semibold">Kg of Food Received</p>
           </div>
         </div>
@@ -184,9 +197,10 @@
       <div class="mt-4">
         <p class="fw-semibold mb-1">Community Progress</p>
         <div class="progress">
-          <div class="progress-bar progress-bar-custom" style="width: 80%;"></div>
+          {% set progress_percentage = ((food_received / 300) * 100) | int if food_received else 0 %}
+          <div class="progress-bar progress-bar-custom" style="width: {{ progress_percentage }}%;"></div>
         </div>
-        <small class="text-muted">You've reached 80% of your monthly community goal</small>
+        <small class="text-muted">You've reached {{ progress_percentage }}% of your monthly community goal (300 kg)</small>
       </div>
     </section>
 
@@ -197,7 +211,7 @@
           <i class="fas fa-upload"></i>
           <h4>Upload Requests</h4>
           <p>Submit your food needs or donation requests to suppliers.</p>
-          <a href="uploadrequest.html" class="btn">Upload Request</a>
+          <a href="{{ url_for('upload_request') }}" class="btn">Upload Request</a>
         </div>
       </div>
 
@@ -206,7 +220,7 @@
           <i class="fas fa-box-open"></i>
           <h4>View Available Food Surplus</h4>
           <p>Browse food surplus listed by suppliers and request what you need.</p>
-          <a href="view-available-surplus.html" class="btn">View Surplus</a>
+          <a href="{{ url_for('view_available_surplus') }}" class="btn">View Surplus</a>
         </div>
       </div>
     </div>
