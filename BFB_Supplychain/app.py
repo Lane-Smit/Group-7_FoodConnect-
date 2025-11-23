@@ -1,3 +1,5 @@
+#Cassidy Please make sure our sql code is fine before implementing Authentication
+#Dont change the name just the code if needed. 
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 import sqlite3
 import os
@@ -38,7 +40,7 @@ def role_required(role):
         return decorated_function
     return decorator
 
-# Homepage Route
+#Our Hompage Route 
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -51,40 +53,40 @@ def about():
 def contact():
     return render_template('contact.html')
 
-# Signup Route
+#Our Signup Route
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         try:
-            # Get form data
+            #Get data form form 
             user_fullname = request.form['name']
             email = request.form['email']
             contact_number = request.form['phone']
             password = request.form['password']
             confirm_password = request.form['confirm']
 
-            # Validate passwords match
+            #Validate passwords match
             if password != confirm_password:
                 flash('Passwords do not match!', 'error')
                 return render_template('signup.html')
 
             conn = get_db_connection()
 
-            # Check if email already exists
+            #Check if email already exsists
             existing_user = conn.execute('SELECT email FROM users WHERE email = ?', (email,)).fetchone()
             if existing_user:
                 flash('Email already registered. Please login.', 'error')
                 conn.close()
                 return render_template('signup.html')
 
-            # Create default location for new user
+            #Create default location for new user
             conn.execute('''
                 INSERT INTO locations (province, city, zip_code, street_address)
                 VALUES (?, ?, ?, ?)
             ''', ('Not specified', 'Not specified', '0000', 'Not specified'))
             location_id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
 
-            # Insert new user
+            #Insert new user
             conn.execute('''
                 INSERT INTO users (user_fullname, occupation, location_id, contact_number, email, password)
                 VALUES (?, ?, ?, ?, ?, ?)
@@ -102,7 +104,7 @@ def signup():
 
     return render_template('signup.html')
 
-# Supplier Login Route
+#Suplier Login Route
 @app.route('/supplierlogin', methods=['GET', 'POST'])
 def supplier_login():
     if request.method == 'POST':
@@ -112,21 +114,21 @@ def supplier_login():
 
             conn = get_db_connection()
 
-            # Validate user credentials
+            #Validate user credentials
             user = conn.execute('SELECT * FROM users WHERE email = ? AND password = ?', (email, password)).fetchone()
 
             if user:
-                # Check if user has Supplier role
+                #Check if user has Supplier role
                 roles = conn.execute('SELECT role FROM user_roles WHERE user_id = ?', (user['user_id'],)).fetchall()
                 user_roles = [role['role'] for role in roles]
 
-                # If user doesn't have Supplier role, add it
+                #So if user doesn't have Supplier role, add it
                 if 'Supplier' not in user_roles:
                     conn.execute('INSERT INTO user_roles (user_id, role) VALUES (?, ?)', (user['user_id'], 'Supplier'))
                     conn.commit()
                     user_roles.append('Supplier')
 
-                # Set session
+                #Set sesion
                 session['user_id'] = user['user_id']
                 session['user_fullname'] = user['user_fullname']
                 session['roles'] = user_roles
@@ -145,7 +147,7 @@ def supplier_login():
 
     return render_template('supplierlogin.html')
 
-# Recipient Login Route
+#Recipeint Login Route
 @app.route('/recipientlogin', methods=['GET', 'POST'])
 def recipient_login():
     if request.method == 'POST':
@@ -155,21 +157,21 @@ def recipient_login():
 
             conn = get_db_connection()
 
-            # Validate user credentials
+            #Validate user credentials
             user = conn.execute('SELECT * FROM users WHERE email = ? AND password = ?', (email, password)).fetchone()
 
             if user:
-                # Check if user has Recipient role
+                #Check if user has Recipient role
                 roles = conn.execute('SELECT role FROM user_roles WHERE user_id = ?', (user['user_id'],)).fetchall()
                 user_roles = [role['role'] for role in roles]
 
-                # If user doesn't have Recipient role, add it
+                #So if user doesn't have Recipient role, add it
                 if 'Recipient' not in user_roles:
                     conn.execute('INSERT INTO user_roles (user_id, role) VALUES (?, ?)', (user['user_id'], 'Recipient'))
                     conn.commit()
                     user_roles.append('Recipient')
 
-                # Set session
+                #Set sesssion
                 session['user_id'] = user['user_id']
                 session['user_fullname'] = user['user_fullname']
                 session['roles'] = user_roles
@@ -188,14 +190,14 @@ def recipient_login():
 
     return render_template('recipientlogin.html')
 
-# Logout Route
+#Log out Route
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('index'))
 
-# Supplier Dashboard Route
+#Supplier Dashboard Route
 @app.route('/supplier-dashboard')
 @role_required('Supplier')
 def supplier_dashboard():
@@ -203,11 +205,11 @@ def supplier_dashboard():
         user_id = session['user_id']
         conn = get_db_connection()
 
-        # Get KPIs for supplier
-        # Total items uploaded
+        #Get KPIs for supplier
+        #Total items uploaded
         total_items = conn.execute('SELECT COUNT(*) FROM food_items WHERE user_id = ?', (user_id,)).fetchone()[0]
 
-        # Items expiring soon (within 7 days)
+        #Items expiring soon (within 7 days)
         expiring_soon = conn.execute('''
             SELECT COUNT(*) FROM food_items
             WHERE user_id = ?
@@ -215,31 +217,31 @@ def supplier_dashboard():
             AND status != 'Completed'
         ''', (user_id,)).fetchone()[0]
 
-        # Donated items (completed transactions)
+        #Donated items (completed transactions)
         donated_today = conn.execute('''
             SELECT COUNT(*) FROM transactions
             WHERE supplier_id = ?
             AND date(created_at) = date('now')
         ''', (user_id,)).fetchone()[0]
 
-        # Active requests for supplier's items
+        #Active requests for supplier's items
         active_requests = conn.execute('''
             SELECT COUNT(*) FROM requests r
             JOIN food_items f ON r.item_id = f.item_id
             WHERE f.user_id = ? AND r.status = 'Pending'
         ''', (user_id,)).fetchone()[0]
 
-        # Total recipients helped
+        #Total recipients helped
         recipients_helped = conn.execute('''
             SELECT COUNT(DISTINCT recipient_id) FROM transactions WHERE supplier_id = ?
         ''', (user_id,)).fetchone()[0]
 
-        # Total kg donated
+        #Total kg donated
         kg_donated = conn.execute('''
             SELECT COALESCE(SUM(quantity), 0) FROM transactions WHERE supplier_id = ?
         ''', (user_id,)).fetchone()[0]
 
-        # Current inventory
+        #Current inventory
         inventory = conn.execute('''
             SELECT f.*, l.city, l.street_address
             FROM food_items f
@@ -263,7 +265,7 @@ def supplier_dashboard():
         flash(f'Error loading dashboard: {str(e)}', 'error')
         return redirect(url_for('index'))
 
-# Upload Food Surplus Route
+#Upload Food Surplus Route
 @app.route('/uploadfoodsurplus', methods=['GET', 'POST'])
 @role_required('Supplier')
 def upload_food_surplus():
@@ -271,7 +273,7 @@ def upload_food_surplus():
         try:
             user_id = session['user_id']
 
-            # Get form data
+            #Get data form the forms
             food_type = request.form['food_type']
             food_name = request.form['food_name']
             quantity_available = float(request.form['quantity_available'])
@@ -284,11 +286,11 @@ def upload_food_surplus():
 
             conn = get_db_connection()
 
-            # Update user occupation if provided
+            #Update user occupation if provided
             if occupation:
                 conn.execute('UPDATE users SET occupation = ? WHERE user_id = ?', (occupation, user_id))
 
-            # Create or get location
+            #Create or get location
             location = conn.execute('SELECT location_id FROM locations WHERE city = ?', (city,)).fetchone()
             if location:
                 location_id = location['location_id']
@@ -299,7 +301,7 @@ def upload_food_surplus():
                 ''', ('Not specified', city, '0000', 'Not specified'))
                 location_id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
 
-            # Insert food item
+            #Insert food item
             conn.execute('''
                 INSERT INTO food_items (user_id, food_type, food_name, quantity_available,
                                        expiry_date, delivery_option, location_id, description, status)
@@ -319,7 +321,7 @@ def upload_food_surplus():
 
     return render_template('uploadfoodsurplus.html')
 
-# View Recipient Needs Route
+#View Recipeint needs Route
 @app.route('/view-recipient-needs')
 @role_required('Supplier')
 def view_recipient_needs():
@@ -327,7 +329,7 @@ def view_recipient_needs():
         user_id = session['user_id']
         conn = get_db_connection()
 
-        # Get all requests for supplier's items
+        #Get all requests for supplier's items
         requests = conn.execute('''
             SELECT r.*, f.food_name, f.food_type, f.quantity_available,
                    u.user_fullname, u.contact_number, u.email
@@ -346,7 +348,7 @@ def view_recipient_needs():
         flash(f'Error loading recipient needs: {str(e)}', 'error')
         return redirect(url_for('supplier_dashboard'))
 
-# Recipient Dashboard Route
+#Recipient Dashboard Route
 @app.route('/recipient-dashboard')
 @role_required('Recipient')
 def recipient_dashboard():
@@ -354,16 +356,16 @@ def recipient_dashboard():
         user_id = session['user_id']
         conn = get_db_connection()
 
-        # Get KPIs for recipient
-        # Total requests uploaded
+        #Get KPIs for recipient
+        #Total requests uploaded
         requests_uploaded = conn.execute('SELECT COUNT(*) FROM requests WHERE recipient_id = ?', (user_id,)).fetchone()[0]
 
-        # Total food received (completed transactions)
+        #Total food received (completed transactions)
         kg_received = conn.execute('''
             SELECT COALESCE(SUM(quantity), 0) FROM transactions WHERE recipient_id = ?
         ''', (user_id,)).fetchone()[0]
 
-        # Suppliers helped (distinct suppliers)
+        #suppliers helped (distinct suppliers)
         suppliers_count = conn.execute('''
             SELECT COUNT(DISTINCT supplier_id) FROM transactions WHERE recipient_id = ?
         ''', (user_id,)).fetchone()[0]
@@ -379,7 +381,7 @@ def recipient_dashboard():
         flash(f'Error loading dashboard: {str(e)}', 'error')
         return redirect(url_for('index'))
 
-# Upload Request Route
+#Upload Request Route
 @app.route('/uploadrequest', methods=['GET', 'POST'])
 @role_required('Recipient')
 def upload_request():
@@ -387,14 +389,14 @@ def upload_request():
         try:
             user_id = session['user_id']
 
-            # Get form data
+            #Get data from form 
             item_id = int(request.form['item_id'])
             quantity_needed = float(request.form['quantity_needed'])
             urgency_level = request.form.get('urgency_level', 'Medium')
 
             conn = get_db_connection()
 
-            # Check if quantity needed is available
+            #Check if quantity needed is available
             food_item = conn.execute('SELECT quantity_available FROM food_items WHERE item_id = ?', (item_id,)).fetchone()
 
             if not food_item:
@@ -407,7 +409,7 @@ def upload_request():
                 conn.close()
                 return redirect(url_for('view_available_surplus'))
 
-            # Insert request
+            #Insert request
             conn.execute('''
                 INSERT INTO requests (item_id, recipient_id, quantity_needed, urgency_level, status)
                 VALUES (?, ?, ?, ?, ?)
@@ -425,14 +427,14 @@ def upload_request():
 
     return render_template('uploadrequest.html')
 
-# View Available Surplus Route
+#View Available Surplus Route
 @app.route('/view-available-surplus')
 @role_required('Recipient')
 def view_available_surplus():
     try:
         conn = get_db_connection()
 
-        # Get all available food items
+        #Get all available food items
         surplus = conn.execute('''
             SELECT f.*, u.user_fullname, u.contact_number, l.city, l.street_address
             FROM food_items f
@@ -450,7 +452,7 @@ def view_available_surplus():
         flash(f'Error loading surplus: {str(e)}', 'error')
         return redirect(url_for('recipient_dashboard'))
 
-# API Endpoint: Get Food Items (JSON)
+#API Endpoint: Get Food Items (JSON)
 @app.route('/api/food-items')
 def api_food_items():
     try:
@@ -470,7 +472,7 @@ def api_food_items():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# API Endpoint: Get Requests (JSON)
+#API Endpoint: Get Requests (JSON)
 @app.route('/api/requests')
 def api_requests():
     try:
@@ -489,7 +491,7 @@ def api_requests():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# API Endpoint: Get KPI Data (JSON)
+#API Endpoint: Get KPI Data (JSON)
 @app.route('/api/kpi/<user_type>')
 @login_required
 def api_kpi(user_type):
@@ -523,7 +525,6 @@ def api_kpi(user_type):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Fix for Windows hostname Unicode issue
     import os
     os.environ['FLASK_SKIP_DOTENV'] = '1'
     app.run(host='127.0.0.1', port=5000, debug=False)
