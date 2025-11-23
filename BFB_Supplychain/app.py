@@ -634,7 +634,18 @@ def api_update_request(request_id):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Fix for Windows hostname Unicode issue
-    import os
-    os.environ['FLASK_SKIP_DOTENV'] = '1'
-    app.run(host='127.0.0.1', port=5000, debug=False)
+    # Windows workaround: avoid Unicode errors in hostname resolution
+    import socket
+
+    original_getfqdn = socket.getfqdn
+
+    def safe_getfqdn(name=''):
+        try:
+            return original_getfqdn(name)
+        except UnicodeDecodeError:
+            # Fallback if Windows returns a weird hostname
+            return 'localhost'
+
+    socket.getfqdn = safe_getfqdn
+
+    app.run(host='127.0.0.1', port=5000, debug=True)
