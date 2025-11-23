@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Cassidy Thersby-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -135,10 +136,10 @@
         <i class="fas fa-seedling me-2"></i>FoodConnect
       </h1>
       <div>
-        <a href="recipient-dashboard.html" class="about-link me-4">Dashboard</a>
-        <a href="index.html" class="about-link me-4">Home</a>
-        <a href="contact.html" class="about-link">Contact</a>
-        <a href="#" class="about-link">Logout</a>
+        <a href="{{ url_for('recipient_dashboard') }}" class="about-link me-4">Dashboard</a>
+        <a href="{{ url_for('index') }}" class="about-link me-4">Home</a>
+        <a href="{{ url_for('contact') }}" class="about-link me-4">Contact</a>
+        <a href="{{ url_for('logout') }}" class="about-link">Logout</a>
       </div>
     </div>
   </header>
@@ -150,6 +151,18 @@
         Search by <b>occupation</b>, <b>location</b>, or <b>Food type</b> to find what you need faster!
       </p>
     </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
     <div class="search-box text-center">
       <input id="searchInput" type="text" class="form-control" placeholder="Search by occupation, location, or food type...">
@@ -174,63 +187,35 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Data aligned with uploadfoodsurplus.html & database fields to get a visual of how it will look after Backend is aded-->
-          <tr class="expiry-good">
-            <td><button class="request-btn" onclick="requestFood(this, 'Fresh Harvest Foods', 'Vegetables')">Request</button></td>
-            <td>Fresh Harvest Foods</td>
-            <td>Farm</td>
-            <td>Pretoria</td>
-            <td>083 221 4567</td>
-            <td>Vegetables</td>
-            <td>120</td>
-            <td>kg</td>
-            <td>2025-11-05</td>
-            <td>Refrigerated</td>
-            <td>Available for pickup between 9am - 3pm</td>
-            <td><span class="badge bg-success status-badge">Available</span></td>
-          </tr>
-          <tr class="expiry-soon">
-            <td><button class="request-btn" onclick="requestFood(this, 'Daily Bread Bakery', 'Bread & rolls')">Request</button></td>
-            <td>Daily Bread Bakery</td>
-            <td>Bakery</td>
-            <td>Durban</td>
-            <td>082 778 9001</td>
-            <td>Bread & rolls</td>
-            <td>200</td>
-            <td>items</td>
-            <td>2025-10-31</td>
-            <td>Ambient</td>
-            <td>Freshly baked, same-day pickup preferred</td>
-            <td><span class="badge bg-warning status-badge">Soon</span></td>
-          </tr>
-          <tr class="expiry-warning">
-            <td><button class="request-btn" onclick="requestFood(this, 'Good Meats SA', 'Chicken portions')">Request</button></td>
-            <td>Good Meats SA</td>
-            <td>Butchery</td>
-            <td>Cape Town</td>
-            <td>081 556 7890</td>
-            <td>Chicken portions</td>
-            <td>100</td>
-            <td>kg</td>
-            <td>2025-10-30</td>
-            <td>Frozen</td>
-            <td>Pickup by weekend preferred</td>
-            <td><span class="badge bg-danger status-badge">Urgent</span></td>
-          </tr>
-          <tr class="expiry-good">
-            <td><button class="request-btn" onclick="requestFood(this, 'Milky Way Dairy', 'Yogurt & milk packs')">Request</button></td>
-            <td>Milky Way Dairy</td>
-            <td>Dairy Supplier</td>
-            <td>Bloemfontein</td>
-            <td>083 456 1122</td>
-            <td>Yogurt & milk packs</td>
-            <td>80</td>
-            <td>L</td>
-            <td>2025-11-03</td>
-            <td>Refrigerated</td>
-            <td>Deliveries available to local shelters</td>
-            <td><span class="badge bg-success status-badge">Available</span></td>
-          </tr>
+          {% if surplus %}
+            {% for item in surplus %}
+            <tr class="expiry-good">
+              <td>
+                <form action="{{ url_for('upload_request') }}" method="POST" style="display: inline;">
+                  <input type="hidden" name="item_id" value="{{ item['item_id'] }}">
+                  <input type="hidden" name="quantity_needed" value="{{ item['quantity_available'] }}">
+                  <input type="hidden" name="urgency_level" value="Medium">
+                  <button type="submit" class="request-btn">Request</button>
+                </form>
+              </td>
+              <td>{{ item['user_fullname'] }}</td>
+              <td>-</td>
+              <td>{{ item['city'] or 'Not specified' }}</td>
+              <td>{{ item['contact_number'] }}</td>
+              <td>{{ item['food_type'] }}</td>
+              <td>{{ item['quantity_available'] }}</td>
+              <td>kg</td>
+              <td>{{ item['expiry_date'] }}</td>
+              <td>{{ item['delivery_option'] }}</td>
+              <td>{{ item['description'] or 'N/A' }}</td>
+              <td><span class="badge bg-success status-badge">Available</span></td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="12" class="text-center text-muted py-4">No surplus food available at the moment.</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
