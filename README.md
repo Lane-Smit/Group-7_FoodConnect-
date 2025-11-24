@@ -190,26 +190,29 @@ The database (`foodconnect.db`) is already included with sample data. If you nee
 
 2. Create and load the database:
    ```bash
-   sqlite3 foodconnect.db
+   sqlite3 foodconnect.db < foodconnect.sql
    ```
-
-3. Inside SQLite prompt, load the schema:
+3. Alternatively, you can do it manually:
+   ```bash
+   sqlite3 foodconnect.db
+   ```   
+4. Inside SQLite prompt, load the schema:
    ```sql
    .read foodconnect.sql
    ```
 
-4. Verify tables were created:
+5. Verify tables were created:
    ```sql
    .tables
    ```
    Expected output: `food_items  locations  requests  transactions  user_roles  users`
 
-5. Check sample data:
+6. Check sample data:
    ```sql
    SELECT * FROM users;
    ```
 
-6. Exit SQLite:
+7. Exit SQLite:
    ```sql
    .exit
    ```
@@ -399,34 +402,33 @@ erDiagram
 
 ```
 Group-7_FoodConnect-/
-|
-├── BFB_Supplychain/
-|   ├── static/
-|   |   └── images/
-|   |       └── background.png           # Background image for website
-|   |
-|   ├── templates/
-|   |   ├── about.html                   # About us information page
-|   |   ├── contact.html                 # Contact information page
-|   |   ├── index.html                   # Main landing page
-|   |   ├── recipient-dashboard.html     # Recipient dashboard
-|   |   ├── recipientlogin.html          # Recipient login page
-|   |   ├── signup.html                  # User registration page
-|   |   ├── supplier-dashboard.html      # Supplier dashboard
-|   |   ├── supplierlogin.html           # Supplier login page
-|   |   ├── uploadfoodsurplus.html       # Upload surplus food form
-|   |   ├── uploadrequest.html           # Submit food request form
-|   |   ├── view-available-surplus.html  # Browse available food items
-|   |   └── view-recipient-needs.html    # View recipient requests
-|   |
-|   ├── app.py                           # Main Flask application
-|   ├── foodconnect.db                   # SQLite database file
-|   ├── foodconnect.sql                  # Database schema and mock data
-|   └── test_routes.py                   # Flask route testing
-|
-└── README.md                            # Project documentation
-└── README.md                            # Project documentation
-
+│
+├── .gitignore                         # Git rules to ignore unnecessary files (cache, DB backups, etc.)
+├── README.md                          # Project documentation and setup instructions
+│
+└── BFB_Supplychain/                   # Main Flask application folder
+    ├── app.py                         # Main Flask backend application (routes, logic, sessions, DB connection)
+    ├── foodconnect.db                 # SQLite database with sample data
+    ├── foodconnect.sql                # SQL schema + mock data for recreating the database
+    ├── test_routes.py                 # Flask route and API testing script
+    │
+    ├── static/                        # Static files served by Flask
+    │   └── images/                    # All website images
+    │       └── background.png         # Website background image
+    │
+    └── templates/                     # HTML templates rendered by Flask
+        ├── about.html                 # About us information page
+        ├── contact.html               # Contact information page
+        ├── index.html                 # Main landing page (home screen)
+        ├── recipient-dashboard.html   # Dashboard for recipient users (impact + stats)
+        ├── recipientlogin.html        # Login page for recipients
+        ├── signup.html                # User registration (sign up) page
+        ├── supplier-dashboard.html    # Dashboard for supplier users (inventory + stats)
+        ├── supplierlogin.html         # Login page for suppliers
+        ├── uploadfoodsurplus.html     # Form where suppliers upload surplus food
+        ├── uploadrequest.html         # Form where recipients upload food requests
+        ├── view-available-surplus.html# Page to browse all available surplus food
+        └── view-recipient-needs.html  # Page for suppliers to view recipient food requests
 ```
 
 ## Installation and Setup
