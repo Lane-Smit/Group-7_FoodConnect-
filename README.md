@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-# Group-7_FoodConnect
 
-FoodConnect is a community-driven web platform designed to minimize food waste and promote social impact by connecting suppliers with surplus food to recipients in need, such as shelters, community kitchens, and NGOs. The system enables suppliers to upload details of their available surplus, and recipients can browse available food surplus listings and submit requests.
-=======
 # Group-7_FoodConnect-
 FoodConnect is a community driven web platform designed to minimize food waste and promote social impact by connecting suppliers with surplus food to recipients in need, such as shelters, community kitchens, and NGOs. The system enables suppliers to upload details of their available surplus food, while recipients can browse available food surplus listings and submit requests.
->>>>>>> 4ddc6952d4dc956bb7a3c79e75a568a91a1ba457
 
 ## Group 7 Members
 | **Name**         | **Student Number** |
@@ -38,13 +33,12 @@ FoodConnect is a community driven web platform designed to minimize food waste a
 - Added extended mock data for suppliers, recipients, requests and surplus (foodconnect.sql)
 
 ## Project Purpose
-<<<<<<< HEAD
+
 The purpose of FoodConnect is to address the inefficiencies in South Africa's food supply chain, particularly in the retail and agricultural sectors where food surplus is wasted while underserved communities face food insecurity. The digital platform is built using Flask (Python web framework) and SQLite database to connect food suppliers including farmers, shops, bakeries, and restaurants with recipient organisations such as underprivileged schools, shelters and non-governmental organisations. 
 FoodConnect aims to improve inventory management and customer fulfilment by providing real-time visibility of surplus stock and streamlined communication between suppliers and recipients. This reduces the need for manual processes such as phone calls and emails, ensuring surplus food reaches those in need efficiently. 
 The platform contributes to a social, economic and environmental sustainability for South Africa. Socially, it improves access to food in the underserved communities by improving redistribution. To reduce food insecurity. Economically, it reduces waste disposal costs for suppliers. Environmentally, less food is wasted therefore less resources are needed to produce more food. 
 FoodConnect aims to create a more connected and sustainable food supply chain. With the use of technology, businesses are given the platform to operate more efficiently and in a more sustainable manner, having a positive social impact for South Africa. Through FoodConnect, surplus food is used as a resource instead of becoming waste. 
-=======
->>>>>>> 4ddc6952d4dc956bb7a3c79e75a568a91a1ba457
+
 
 The purpose of FoodConnect is to address the inefficiencies in South Africa's food supply chain, particularly in the retail and agricultural sectors where food surplus is wasted while underserved communities face food insecurity.
 
@@ -60,7 +54,6 @@ FoodConnect creates a more connected and sustainable food supply chain, enabling
 ---
 
 ## Features
-<<<<<<< HEAD
 
 ### Authentication & User Management
 - **User Registration**: New users can create accounts with email and password
@@ -100,15 +93,12 @@ FoodConnect creates a more connected and sustainable food supply chain, enabling
 - **Data Validation**: Triggers to ensure data integrity
 - **Mock Data**: Pre-populated sample data for testing and demonstration
 - **Transaction Tracking**: Complete audit trail of food donations
-=======
->>>>>>> 4ddc6952d4dc956bb7a3c79e75a568a91a1ba457
 
 ### Public Pages
 - **Main Landing Page (index.html)**: Shows FoodConnect's community impact, testimonials, and how the platform works
 - **About Us (about.html)**: Information about FoodConnect's mission and vision
 - **Contact (contact.html)**: Contact information for the development team
 
-<<<<<<< HEAD
 ## Database Setup
 Follow these steps to create and load the FoodConnect database.
 
@@ -117,7 +107,6 @@ Follow these steps to create and load the FoodConnect database.
    ```bash
    cd Group-7_FoodConnect-/BFB_Supplychain
    ```
-=======
 ### Authentication & Authorization
 - **User Signup**: Create new accounts with email validation
 - **Dual Login System**:
@@ -125,7 +114,6 @@ Follow these steps to create and load the FoodConnect database.
   - Recipient Login (recipientlogin.html)
 - **Role-Based Access Control**: Different features for suppliers vs recipients
 - **Session Management**: Secure user sessions with logout functionality
->>>>>>> 4ddc6952d4dc956bb7a3c79e75a568a91a1ba457
 
 ### Supplier Features
 - **Supplier Dashboard (supplier-dashboard.html)**:
@@ -410,7 +398,6 @@ erDiagram
 ## File Structure
 
 ```
-<<<<<<< HEAD
 Group-7_FoodConnect-/
 |
 ├── BFB_Supplychain/
@@ -438,6 +425,8 @@ Group-7_FoodConnect-/
 |   └── test_routes.py                   # Flask route testing
 |
 └── README.md                            # Project documentation
+└── README.md                            # Project documentation
+
 ```
 
 ## Installation and Setup
@@ -535,37 +524,11 @@ You can use the following pre-populated accounts from the mock data:
 - **Bootstrap 5.3.8**: UI framework and styling for responsive design
 - **Bootstrap Icons**: Icon set used in the design of HTML templates
 - **Visual Studio Code**: IDE used for development
-=======
-Group-27_FoodConnect-/
-├── BFB_Supplychain/
-│   ├── app.py                          # Flask backend (530 lines)
-│   ├── foodconnect.db                  # SQLite database with sample data
-│   ├── foodconnect.sql                 # Database schema and mock data
-│   ├── test_routes.py                  # Automated test suite
-│   │
-│   └── templates/                      # HTML templates (13 files)
-│       ├── index.html                  # Landing page
-│       ├── about.html                  # About page
-│       ├── contact.html                # Contact page
-│       ├── signup.html                 # User registration
-│       ├── supplierlogin.html          # Supplier login
-│       ├── recipientlogin.html         # Recipient login
-│       ├── supplier-dashboard.html     # Supplier dashboard
-│       ├── recipient-dashboard.html    # Recipient dashboard
-│       ├── uploadfoodsurplus.html      # Upload surplus form
-│       ├── uploadrequest.html          # Upload request form
-│       ├── view-available-surplus.html # Browse surplus
-│       └── view-recipient-needs.html   # View requests
-│
-└── README.md                            # This file
-```
-
 ---
 
 ## API Endpoints
 
 ### Public Endpoints
->>>>>>> 4ddc6952d4dc956bb7a3c79e75a568a91a1ba457
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -677,3 +640,4 @@ The application works with all modern browsers supporting HTML5, CSS3, and JavaS
 - Edge 90+
 
 ---
+Note: This is a static HTML application. For production use, you would need to add backend functionality for database connectivity and form processing.
