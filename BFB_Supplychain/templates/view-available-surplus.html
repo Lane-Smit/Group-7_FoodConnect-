@@ -198,8 +198,8 @@
                   <button type="submit" class="request-btn">Request</button>
                 </form>
               </td>
-              <td>{{ item['user_fullname'] }}</td>
-              <td>-</td>
+              <td>{{ item['supplier_name'] }}</td>
+              <td>{{ item['occupation'] or '-' }}</td>
               <td>{{ item['city'] or 'Not specified' }}</td>
               <td>{{ item['contact_number'] }}</td>
               <td>{{ item['food_type'] }}</td>
