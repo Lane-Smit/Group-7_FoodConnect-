@@ -1,5 +1,5 @@
 # Group-7_FoodConnect-
-FoodConnect is a community-driven web platform designed to minimize food waste and promote social impact by connecting suppliers with surplus food to recipients in need, such as shelters, community kitchens, and NGOs. The system enables supplier to upload details of their available surplus. Recipients can browse available food surplus listings.
+FoodConnect is a community driven web platform designed to minimize food waste and promote social impact by connecting suppliers with surplus food to recipients in need, such as shelters, community kitchens, and NGOs. The system enables suppliers to upload details of their available surplus food, while recipients can browse available food surplus listings and submit requests.
 
 ## Group 7 Members
 | **Name**         | **Student Number** |
@@ -8,22 +8,63 @@ FoodConnect is a community-driven web platform designed to minimize food waste a
 | Cassidy Thersby  | **22591622**       |
 | Carin de Beer    | **23757508**       |
 
-   
 ## Project Purpose
-The purpose of FoodConnect is to address the inefficiencies in South Africa’s food supply chain, particularly in the retail and agricultural sectors where food surplus is wasted while underserved communities face food insecurity. The digital platform is designed using Visual Studios and MySQL to connect food suppliers including farmers, shops, bakeries, and restaurants with recipient organisations such as underprivileged schools, shelters and non-governmental organisations. 
-FoodConnect aims to improve inventory management and customer fulfilment by providing real-time visibility of surplus stock and streamlined communication between suppliers and recipients. This reduces the need for manual processes such as phone calls and emails, ensuring surplus food reaches those in need efficiently. 
-The platform contributes to a social, economic and environmental sustainability for South Africa. Socially, it improves access to food in the underserved communities by improving redistribution. To reduce food insecurity. Economically, it reduces waste disposal costs for suppliers. Environmentally, less food is wasted therefore less resources are needed to produce more food. 
-FoodConnect aims to create a more connected and sustainable food supply chain. With the use of technology, businesses are given the platform to operate more efficiently and in a more sustainable manner, having a positive social impact for South Africa. Through FoodConnect, surplus food is used as a resource instead of becoming waste. 
 
+The purpose of FoodConnect is to address the inefficiencies in South Africa's food supply chain, particularly in the retail and agricultural sectors where food surplus is wasted while underserved communities face food insecurity.
+
+The digital platform connects food suppliers (farmers, shops, bakeries, and restaurants) with recipient organisations (underprivileged schools, shelters, and non-governmental organisations). FoodConnect aims to improve inventory management and customer fulfilment by providing real-time visibility of surplus stock and streamlined communication between suppliers and recipients.
+
+### Impact Areas:
+- **Social:** Improves access to food in underserved communities by improving redistribution and reducing food insecurity
+- **Economic:** Reduces waste disposal costs for suppliers
+- **Environmental:** Less food waste means fewer resources needed for food production
+
+FoodConnect creates a more connected and sustainable food supply chain, enabling businesses to operate more efficiently while having a positive social impact for South Africa.
+
+---
 
 ## Features
-- **Main Dashboard - index.html**: The index page shows the impact that FoodConnect has on the community, featuring a Sign Up and Log In option. 
-+ **About Us Information Page**: This page provides information about what FoodConnect is and their mission. 
-- **Sign up and Login Pages**: Allow users to create an account or log into their dashboard. 
-+ **Supplier and Recipient Dashboards**: The **supplier** dashboard allows users to view the current inventory. The **recipient** dashboard allows those in need to upload food requests and view available food surplus items. 
-- **Inventory Tracking**: Can be viewed from the **supplier** dashboard.
-+ **Available Food Surplus**: Can be viewed from the **recipient** dashboard.
 
+### Public Pages
+- **Main Landing Page (index.html)**: Shows FoodConnect's community impact, testimonials, and how the platform works
+- **About Us (about.html)**: Information about FoodConnect's mission and vision
+- **Contact (contact.html)**: Contact information for the development team
+
+### Authentication & Authorization
+- **User Signup**: Create new accounts with email validation
+- **Dual Login System**:
+  - Supplier Login (supplierlogin.html)
+  - Recipient Login (recipientlogin.html)
+- **Role-Based Access Control**: Different features for suppliers vs recipients
+- **Session Management**: Secure user sessions with logout functionality
+
+### Supplier Features
+- **Supplier Dashboard (supplier-dashboard.html)**:
+  - Impact Overview KPIs (total items uploaded, recipients helped, kg donated)
+  - Current Inventory display with expiry tracking
+  - Items expiring soon alerts
+  - Active requests tracking
+  - Monthly contribution progress bar
+- **Upload Food Surplus (uploadfoodsurplus.html)**: Add new surplus food items
+- **View Recipient Needs (view-recipient-needs.html)**: Browse food requests from recipients
+
+### Recipient Features
+- **Recipient Dashboard (recipient-dashboard.html)**:
+  - Impact KPIs (requests uploaded, suppliers connected, kg received)
+  - Community progress tracking
+- **View Available Surplus (view-available-surplus.html)**: Browse all available food items with search functionality
+- **Upload Request (uploadrequest.html)**: Submit food requests with urgency levels
+
+### Backend Features
+- **16 Flask Routes**: Complete backend API
+- **3 JSON API Endpoints**:
+  - `/api/food-items` - All available food items
+  - `/api/requests` - All recipient requests
+  - `/api/kpi/supplier` & `/api/kpi/recipient` - Dashboard KPI data
+- **Real-time KPI Calculations**: Dynamic metrics for both user types
+- **Database CRUD Operations**: Full create, read, update, delete functionality
+
+---
 
 ## Database Setup
 Follow these steps to create and load the FoodConnect database.
