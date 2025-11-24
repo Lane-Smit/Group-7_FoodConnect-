@@ -17,7 +17,7 @@
     }
 
     body {
-      background-image: url("{{ url_for('static', filename='images/background.png') }}");
+      background-image: url('images/background.png');
       background-size: cover;
       background-repeat: no-repeat;
       background-attachment: fixed;
@@ -188,28 +188,30 @@
           {% if requests %}
             {% for req in requests %}
             <tr>
-              <td>
-                <button class="donate-btn" disabled><i class="fas fa-hand-holding-heart me-1"></i>Donate</button>
-              </td>
-              <td>{{ req['user_fullname'] }}</td>
-              <td>-</td>
-              <td>{{ req['contact_number'] }}</td>
-              <td>{{ req['food_type'] }}</td>
-              <td>{{ req['food_name'] }}</td>
-              <td>{{ req['quantity_needed'] }} kg</td>
-              <td>
-                {% if req['urgency_level'] == 'High' %}
-                  <span class="badge urgency-high">High</span>
-                {% elif req['urgency_level'] == 'Medium' %}
-                  <span class="badge urgency-medium">Medium</span>
-                {% else %}
-                  <span class="badge urgency-low">Low</span>
-                {% endif %}
-              </td>
-              <td>{{ req['created_at'][:10] if req['created_at'] else 'N/A' }}</td>
-              <td>-</td>
-              <td><span class="badge bg-secondary status-badge">{{ req['status'] }}</span></td>
-            </tr>
+             <td>
+              <button class="donate-btn" disabled>
+               <i class="fas fa-hand-holding-heart me-1"></i>Donate
+              </button>
+            </td>
+            <td>{{ req['recipient_name'] }}</td>
+            <td>{{ req['recipient_city'] or '-' }}</td>
+            <td>{{ req['recipient_contact'] }}</td>
+            <td>{{ req['food_type'] }}</td>
+            <td>{{ req['food_name'] }}</td>
+            <td>{{ req['quantity_needed'] }} kg</td>
+            <td>
+              {% if req['urgency_level'] == 'High' %}
+                <span class="badge urgency-high">High</span>
+              {% elif req['urgency_level'] == 'Medium' %}
+                <span class="badge urgency-medium">Medium</span>
+              {% else %}
+                <span class="badge urgency-low">Low</span>
+              {% endif %}
+            </td>
+            <td>{{ req['created_at'][:10] if req['created_at'] else 'N/A' }}</td>
+            <td>-</td>
+            <td><span class="badge bg-secondary status-badge">{{ req['status'] }}</span></td>
+          </tr>
             {% endfor %}
           {% else %}
             <tr>

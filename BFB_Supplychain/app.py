@@ -197,69 +197,63 @@ def logout():
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('index'))
 
-#Supplier Dashboard Route
+#Suplier Dashboard Route
 @app.route('/supplier-dashboard')
 @role_required('Supplier')
 def supplier_dashboard():
     try:
-        user_id = session['user_id']
         conn = get_db_connection()
 
-        #Get KPIs for supplier
-        #Total items uploaded
-        total_items = conn.execute('SELECT COUNT(*) FROM food_items WHERE user_id = ?', (user_id,)).fetchone()[0]
+        #GLOBAL KPIs (same for any supplier who logs in)
+        total_items = conn.execute(
+            'SELECT COUNT(*) FROM food_items'
+        ).fetchone()[0]
 
-        #Items expiring soon (within 7 days)
         expiring_soon = conn.execute('''
             SELECT COUNT(*) FROM food_items
-            WHERE user_id = ?
-            AND date(expiry_date) BETWEEN date('now') AND date('now', '+7 days')
-            AND status != 'Completed'
-        ''', (user_id,)).fetchone()[0]
+            WHERE date(expiry_date) BETWEEN date('now') AND date('now', '+7 days')
+              AND status != 'Completed'
+        ''').fetchone()[0]
 
-        #Donated items (completed transactions)
         donated_today = conn.execute('''
             SELECT COUNT(*) FROM transactions
-            WHERE supplier_id = ?
-            AND date(created_at) = date('now')
-        ''', (user_id,)).fetchone()[0]
+            WHERE date(created_at) = date('now')
+        ''').fetchone()[0]
 
-        #Active requests for supplier's items
         active_requests = conn.execute('''
-            SELECT COUNT(*) FROM requests r
-            JOIN food_items f ON r.item_id = f.item_id
-            WHERE f.user_id = ? AND r.status = 'Pending'
-        ''', (user_id,)).fetchone()[0]
+            SELECT COUNT(*) FROM requests
+            WHERE status = 'Pending'
+        ''').fetchone()[0]
 
-        #Total recipients helped
         recipients_helped = conn.execute('''
-            SELECT COUNT(DISTINCT recipient_id) FROM transactions WHERE supplier_id = ?
-        ''', (user_id,)).fetchone()[0]
+            SELECT COUNT(DISTINCT recipient_id) FROM transactions
+        ''').fetchone()[0]
 
-        #Total kg donated
         kg_donated = conn.execute('''
-            SELECT COALESCE(SUM(quantity), 0) FROM transactions WHERE supplier_id = ?
-        ''', (user_id,)).fetchone()[0]
+            SELECT COALESCE(SUM(quantity), 0) FROM transactions
+        ''').fetchone()[0]
 
-        #Current inventory
+        # GLOBAL inventory – all food_items from all suppliers
         inventory = conn.execute('''
-            SELECT f.*, l.city, l.street_address
+            SELECT f.*, l.city, l.street_address, u.user_fullname
             FROM food_items f
             LEFT JOIN locations l ON f.location_id = l.location_id
-            WHERE f.user_id = ?
+            LEFT JOIN users u ON f.user_id = u.user_id
             ORDER BY f.expiry_date ASC
-        ''', (user_id,)).fetchall()
+        ''').fetchall()
 
         conn.close()
 
-        return render_template('supplier-dashboard.html',
-                             total_items=total_items,
-                             expiring_soon=expiring_soon,
-                             donated_today=donated_today,
-                             active_requests=active_requests,
-                             recipients_helped=recipients_helped,
-                             kg_donated=kg_donated,
-                             inventory=inventory)
+        return render_template(
+            'supplier-dashboard.html',
+            total_items=total_items,
+            expiring_soon=expiring_soon,
+            donated_today=donated_today,
+            active_requests=active_requests,
+            recipients_helped=recipients_helped,
+            kg_donated=kg_donated,
+            inventory=inventory
+        )
 
     except Exception as e:
         flash(f'Error loading dashboard: {str(e)}', 'error')
@@ -321,24 +315,30 @@ def upload_food_surplus():
 
     return render_template('uploadfoodsurplus.html')
 
-#View Recipeint needs Route
+#View Recipient needs Route
 @app.route('/view-recipient-needs')
 @role_required('Supplier')
 def view_recipient_needs():
     try:
-        user_id = session['user_id']
         conn = get_db_connection()
 
-        #Get all requests for supplier's items
+        #Get ALL requests for ALL items (global mock data)
         requests = conn.execute('''
-            SELECT r.*, f.food_name, f.food_type, f.quantity_available,
-                   u.user_fullname, u.contact_number, u.email
+            SELECT
+                r.*,
+                f.food_name,
+                f.food_type,
+                f.quantity_available,
+                u.user_fullname AS recipient_name,
+                u.contact_number AS recipient_contact,
+                u.email AS recipient_email,
+                l.city AS recipient_city
             FROM requests r
             JOIN food_items f ON r.item_id = f.item_id
             JOIN users u ON r.recipient_id = u.user_id
-            WHERE f.user_id = ?
+            LEFT JOIN locations l ON u.location_id = l.location_id
             ORDER BY r.created_at DESC
-        ''', (user_id,)).fetchall()
+        ''').fetchall()
 
         conn.close()
 
@@ -348,34 +348,34 @@ def view_recipient_needs():
         flash(f'Error loading recipient needs: {str(e)}', 'error')
         return redirect(url_for('supplier_dashboard'))
 
-#Recipient Dashboard Route
+# Recipient Dashboard Route
 @app.route('/recipient-dashboard')
 @role_required('Recipient')
 def recipient_dashboard():
     try:
-        user_id = session['user_id']
         conn = get_db_connection()
 
-        #Get KPIs for recipient
-        #Total requests uploaded
-        requests_uploaded = conn.execute('SELECT COUNT(*) FROM requests WHERE recipient_id = ?', (user_id,)).fetchone()[0]
+        # GLOBAL KPIs – same "Food Impact Overview" for any recipient
+        requests_uploaded = conn.execute(
+            'SELECT COUNT(*) FROM requests'
+        ).fetchone()[0]
 
-        #Total food received (completed transactions)
         kg_received = conn.execute('''
-            SELECT COALESCE(SUM(quantity), 0) FROM transactions WHERE recipient_id = ?
-        ''', (user_id,)).fetchone()[0]
+            SELECT COALESCE(SUM(quantity), 0) FROM transactions
+        ''').fetchone()[0]
 
-        #suppliers helped (distinct suppliers)
         suppliers_count = conn.execute('''
-            SELECT COUNT(DISTINCT supplier_id) FROM transactions WHERE recipient_id = ?
-        ''', (user_id,)).fetchone()[0]
+            SELECT COUNT(DISTINCT supplier_id) FROM transactions
+        ''').fetchone()[0]
 
         conn.close()
 
-        return render_template('recipient-dashboard.html',
-                             requests_uploaded=requests_uploaded,
-                             recipients_supported=suppliers_count,
-                             food_received=kg_received)
+        return render_template(
+            'recipient-dashboard.html',
+            requests_uploaded=requests_uploaded,
+            recipients_supported=suppliers_count,
+            food_received=kg_received
+        )
 
     except Exception as e:
         flash(f'Error loading dashboard: {str(e)}', 'error')
@@ -436,13 +436,20 @@ def view_available_surplus():
 
         #Get all available food items
         surplus = conn.execute('''
-            SELECT f.*, u.user_fullname, u.contact_number, l.city, l.street_address
+            SELECT
+                f.*,
+                u.user_fullname AS supplier_name,
+                u.occupation,
+                u.contact_number,
+                l.city,
+                l.street_address
             FROM food_items f
             JOIN users u ON f.user_id = u.user_id
             LEFT JOIN locations l ON f.location_id = l.location_id
             WHERE f.status = 'Unselected' AND date(f.expiry_date) >= date('now')
             ORDER BY f.expiry_date ASC
         ''').fetchall()
+
 
         conn.close()
 
