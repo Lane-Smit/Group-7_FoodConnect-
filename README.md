@@ -66,40 +66,6 @@ FoodConnect creates a more connected and sustainable food supply chain, enabling
 
 ---
 
-## Database Setup
-Follow these steps to create and load the FoodConnect database.
-### Using SQLite Command Line
-1. Open command prompt and navigate to the project folder.
-
-2. Delete any existing database. If a previous version exists, delete it to avoid conflicts using:
-   ```bash
-    del foodconnect.db
-   ```
-3. Create and load the database. Start SQLite using:
-   ```bash
-   sqlite3 foodconnect.db
-   ```
-   Once inside the SQLite prompt (sqlite>), load the SQL schema using:
-   ```bash
-   .read foodconnect.sql
-   ```
-   
-4. Verify the tables to confirm the tables were created using:
-   ```bash
-   .tables
-   ```
-   Expected output: food_items locations requests transactions user_roles users
-   
-5. Check the mock data. Run this command to verify that sample data was inserted successfully using:
-   ```bash
-   SELECT * FROM users
-   ```
-   You should see sample records like: Alice Smith | Bob Johnson | Carol White | David Brown
-   
-6. Exit SQLite when finished, type:
-   ```bash
-   .exit
-   ```
 ## Technologies Used
 
 ### Backend
@@ -134,6 +100,44 @@ Navigate to the project directory and install Flask:
 ```bash
 pip install flask
 ```
+### Step 2: Database Setup
+
+The database (`foodconnect.db`) is already included with sample data. If you need to recreate it:
+
+#### Using SQLite Command Line:
+
+1. Delete existing database (if needed):
+   ```bash
+   del foodconnect.db
+   ```
+
+2. Create and load the database:
+   ```bash
+   sqlite3 foodconnect.db
+   ```
+
+3. Inside SQLite prompt, load the schema:
+   ```sql
+   .read foodconnect.sql
+   ```
+
+4. Verify tables were created:
+   ```sql
+   .tables
+   ```
+   Expected output: `food_items  locations  requests  transactions  user_roles  users`
+
+5. Check sample data:
+   ```sql
+   SELECT * FROM users;
+   ```
+
+6. Exit SQLite:
+   ```sql
+   .exit
+   ```
+
+---
 
 ## Database Schema
 
