@@ -139,6 +139,100 @@ The database (`foodconnect.db`) is already included with sample data. If you nee
 
 ---
 
+## Running the Application
+
+### Step 1: Start the Flask Server
+
+Open Command Prompt (Windows) or Terminal (Mac/Linux) and navigate to the project folder:
+
+```bash
+cd "C:\Users\User\Documents\Group-7_FoodConnect-\Group-27_FoodConnect-\BFB_Supplychain"
+```
+
+Start the Flask application:
+
+```bash
+python app.py
+```
+
+You should see:
+```
+ * Serving Flask app "app"
+ * Running on http://127.0.0.1:5000
+```
+
+**Important:** Keep this terminal window open while using the application.
+
+### Step 2: Access the Website
+
+Open your web browser and go to:
+```
+http://127.0.0.1:5000
+```
+
+### Step 3: Stop the Server
+
+When finished, press `Ctrl + C` in the terminal to stop the Flask server.
+
+---
+
+## Usage Guide
+
+### For New Users
+
+1. **Sign Up**:
+   - Click "Sign Up Now" on the home page
+   - Fill in your details (name, email, phone, password)
+   - Create your account
+
+2. **Login**:
+   - Choose "Supplier Login" or "Recipient Login"
+   - Enter your email and password
+   - You'll be redirected to your dashboard
+
+### Test Credentials
+
+The database includes sample accounts for testing:
+
+**Supplier Accounts:**
+| Email | Password | Name |
+|-------|----------|------|
+| alice@example.com | hashed_password_1 | Alice Smith |
+| bob@example.com | hashed_password_2 | Bob Johnson |
+
+**Recipient Accounts:**
+| Email | Password | Name |
+|-------|----------|------|
+| carol@example.com | hashed_password_3 | Carol White |
+| dave@example.com | hashed_password_4 | Dave Brown |
+
+### As a Supplier
+
+1. **Login** using supplier credentials
+2. **View Dashboard** - See your impact metrics and current inventory
+3. **Upload Food Surplus**:
+   - Click "Upload Now"
+   - Fill in food details (type, quantity, expiry, location)
+   - Submit the form
+4. **View Recipient Needs** - Browse requests from recipients
+5. **Logout** when done
+
+### As a Recipient
+
+1. **Login** using recipient credentials
+2. **View Dashboard** - See your requests and food received
+3. **Browse Available Surplus**:
+   - Click "View Surplus"
+   - Search by location, food type, or supplier
+   - Click "Request" to claim food items
+4. **Upload Request**:
+   - Click "Upload Request"
+   - Specify food type, quantity, urgency level
+   - Submit the form
+5. **Logout** when done
+
+---
+
 ## Database Schema
 
 ### Entity Relationship Diagram (ERD)
@@ -150,12 +244,12 @@ erDiagram
         TEXT province
         TEXT city
         TEXT zip_code
-        TEXT street_adress
+        TEXT street_address
     }
 
    Users {
         INT user_id PK
-        TEXT user_fullname 
+        TEXT user_fullname
         TEXT occupation
         INT location_id FK
         TEXT contact_number
@@ -174,6 +268,7 @@ erDiagram
         INT item_id FK
         INT recipient_id FK
         DECIMAL quantity_needed
+        TEXT urgency_level
         TEXT status
         DATETIME created_at
     }
@@ -194,7 +289,7 @@ erDiagram
 
    Transactions {
         INT transaction_id PK
-        INT item_id
+        INT item_id FK
         INT supplier_id FK
         INT recipient_id FK
         DECIMAL quantity
@@ -205,91 +300,164 @@ erDiagram
    Users }o -- || Locations : "located at"
    Users }o -- || Requests : "submits"
    Users }o -- || Food_Items : "supplies"
-   Users }o -- || Transactions : "supplier donate"
-   Users }o -- || Transactions : "recipient request"
-   Users || -- o{ User_Roles : "uploaded by"  
-   Locations || -- o{ Food_Items : "located at"  
-   Requests }o -- || Food_Items : "requested by"  
+   Users }o -- || Transactions : "supplier donates"
+   Users }o -- || Transactions : "recipient receives"
+   Users || -- o{ User_Roles : "has role"
+   Locations || -- o{ Food_Items : "located at"
+   Requests }o -- || Food_Items : "requests"
 ```
-
-The database includes the following tables:
 
 ### Tables
-1. **Users**: Includes user information such as name, occupation, contact number, email and password.
-2. **User_Roles**: Contains user id and role of user, either being a supplier or recipient.
-3. **Requests**: Includes information such as the request, recipient, quantity and status of the transaction. 
-4. **Food_Items**: Available food product type, description, quantity with supplier name, location and contact information.
-5. **Transactions**: Transactional information including quantity and status of the request. 
-6. **Location**: Includes location information such as province, city, zip code and street code. 
 
+1. **users**: User information (name, occupation, contact, email, password)
+2. **user_roles**: User role assignment (Supplier or Recipient)
+3. **locations**: Location details (province, city, zip code, street address)
+4. **food_items**: Available surplus food (type, quantity, expiry, location)
+5. **requests**: Recipient food requests (item, quantity, urgency, status)
+6. **transactions**: Completed donations (supplier, recipient, quantity, status)
 
-## Database Demonstration
-The foodconnect.sql migration file was executed successfully in SQLite to create and populate the foodconnect.db database.
-It includes four normalized tables (suppliers, recipients, food_surplus, and food_requests) linked by foreign keys.
-Sample data was inserted into each table (5 records per table) to demonstrate supplier-to-recipient food supply chain interactions.
-The successful execution was verified using SELECT COUNT(*) queries, confirming that all tables contain sample data.
-
-
-## Sample Data
-The database includes the following data types:
-
-- **2 Users** : Suppliers and Recipients
-- **6 Occupation Types** : Restaurant, Grocery Store, Farm, Bakery, Manufacturer, Other
-- **8 Food Types** : Vegetables, Fruit, Meat, Dairy, Starch, Bakery, Beverages, Other
-- **4 Unit Types** : kg, litres, boxes, items
-
-Other data on the **Supplier dashboard** includes:
-- An Impact Overview showing the number of surplus items uploaded, recipients helped, and the amount (in kg) of food donated.
-- A Current Inventory display 
-- An Order management display showing orders with their order numbers and status.
-- Supply chain analytics such as order fulfilment rate and a monthly distribution trend. 
-
-Other data on the **Recipient dashboard** includes the number of requests uploaded, recipients supported, and the total amount (in kg) of food received. 
-
+---
 
 ## File Structure
+
 ```
-BFB Supply Chain/
-|
-├── templates/
-|   ├── images/
-|   |   └──background.png
-|   |
-|   ├── about.html                       # About us information page
-|   ├── contact.html                     # Contact information of the FoodConnect development team
-|   ├── index.html                       # Main dashboard
-|   ├── recipient-dashboard.html         # Main recipient dashboard
-|   ├── recipientlogin.html              # Recipient login page
-|   ├── signup.html                      # Sign up page
-|   ├── supplier-dashboard.html          # Main supplier dashboard
-|   ├── supplierlogin.html               # Recipient login page
-|   ├── uploadfoodsurplus.html           # Upload available surplus food
-|   ├── uploadrequest.html               # Request surplus food
-|   ├── view-available-surplus.html      # View available surplus inventory
-|   ├── view-recipient-needs.html        # View recipient food needs
-├── foodconnect.db
-├── foodconnect.sql
-├── README.md                             # Explanation of project purpose, database schema and ERD.
+Group-27_FoodConnect-/
+├── BFB_Supplychain/
+│   ├── app.py                          # Flask backend (530 lines)
+│   ├── foodconnect.db                  # SQLite database with sample data
+│   ├── foodconnect.sql                 # Database schema and mock data
+│   ├── test_routes.py                  # Automated test suite
+│   │
+│   └── templates/                      # HTML templates (13 files)
+│       ├── index.html                  # Landing page
+│       ├── about.html                  # About page
+│       ├── contact.html                # Contact page
+│       ├── signup.html                 # User registration
+│       ├── supplierlogin.html          # Supplier login
+│       ├── recipientlogin.html         # Recipient login
+│       ├── supplier-dashboard.html     # Supplier dashboard
+│       ├── recipient-dashboard.html    # Recipient dashboard
+│       ├── uploadfoodsurplus.html      # Upload surplus form
+│       ├── uploadrequest.html          # Upload request form
+│       ├── view-available-surplus.html # Browse surplus
+│       └── view-recipient-needs.html   # View requests
+│
+└── README.md                            # This file
 ```
 
-## Usage
-1. Initialize the database using the SQLite command line method above.
-2. Open `index.html` in your web browser.
-3. Log into the website as either a supplier or recipient to access the respective dashboards.
-4. Navigate through the different pages to request or upload available surplus food.
+---
 
+## API Endpoints
 
-## Technologies Used
-- **Visual Studio Code**: Visual Studios was used to create html files to generate the frontend, and to integrate the sql database. 
-- **HTML5**: Used to create the structure of the website. 
-- **Bootstrap 5.3.8**: Used to create the user interface (UI) framework and styling
-- **Bootstrap Icons**: Icon set was used in the design of our html files. 
-- **SQLite**: Used to create the data base and draw up the ERDs.
+### Public Endpoints
 
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Landing page |
+| `/about` | GET | About page |
+| `/contact` | GET | Contact page |
+| `/signup` | GET, POST | User registration |
+| `/supplierlogin` | GET, POST | Supplier authentication |
+| `/recipientlogin` | GET, POST | Recipient authentication |
+| `/logout` | GET | User logout |
+
+### Supplier Endpoints (Login Required)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/supplier-dashboard` | GET | Supplier dashboard with KPIs |
+| `/uploadfoodsurplus` | GET, POST | Upload surplus food |
+| `/view-recipient-needs` | GET | View recipient requests |
+
+### Recipient Endpoints (Login Required)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/recipient-dashboard` | GET | Recipient dashboard with KPIs |
+| `/view-available-surplus` | GET | Browse available food |
+| `/uploadrequest` | GET, POST | Submit food request |
+
+### JSON API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/food-items` | GET | Get all food items (JSON) |
+| `/api/requests` | GET | Get all requests (JSON) |
+| `/api/kpi/supplier` | GET | Get supplier KPIs (JSON) |
+| `/api/kpi/recipient` | GET | Get recipient KPIs (JSON) |
+
+---
+
+## Testing
+
+### Automated Testing
+
+Run the comprehensive test suite:
+
+```bash
+python test_routes.py
+```
+
+This will test:
+- All 16 routes (GET and POST)
+- Authentication flow
+- Database CRUD operations
+- KPI calculations
+- API endpoints
+
+**Test Results:** 25/26 tests passing (96.2% success rate)
+
+### Manual Testing Checklist
+
+- [ ] Sign up new user
+- [ ] Login as supplier
+- [ ] Upload food surplus
+- [ ] View recipient needs
+- [ ] Login as recipient
+- [ ] Browse available surplus
+- [ ] Submit food request
+- [ ] View dashboards with KPIs
+- [ ] Test logout
+- [ ] Access API endpoints
+
+---
+
+## Key Performance Indicators (KPIs)
+
+### Supplier Dashboard
+1. **Total Items Uploaded**: Count of surplus food items added
+2. **Recipients Helped**: Number of unique recipients who received food
+3. **Kg of Food Donated**: Total weight of donated food
+4. **Items Expiring Soon**: Food items expiring within 7 days
+5. **Active Requests**: Pending requests for supplier's items
+6. **Monthly Progress**: Progress toward 500kg monthly goal
+
+### Recipient Dashboard
+1. **Requests Uploaded**: Total food requests submitted
+2. **Suppliers Connected**: Number of unique suppliers
+3. **Kg of Food Received**: Total weight of food received
+4. **Community Progress**: Progress toward 300kg monthly goal
+
+---
+
+## Sample Data
+
+The database includes:
+- **4 Sample Users** (2 suppliers, 2 recipients)
+- **6 Occupation Types**: Restaurant, Grocery Store, Farm, Bakery, Manufacturer, Other
+- **8 Food Types**: Vegetables, Fruits, Meat, Dairy, Grains, Bakery, Beverages, Other
+- **Mock Food Items**: Pre-populated surplus food inventory
+- **Mock Requests**: Sample recipient requests
+- **Mock Transactions**: Completed donation records
+
+---
 
 ## Browser Compatibility
-The application works with all modern browsers that support HTML5 and CSS3, including:
+
+The application works with all modern browsers supporting HTML5, CSS3, and JavaScript ES6:
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
+
+---
