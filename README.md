@@ -100,6 +100,40 @@ Follow these steps to create and load the FoodConnect database.
    ```bash
    .exit
    ```
+## Technologies Used
+
+### Backend
+- **Python 3.x**: Core programming language
+- **Flask 2.x**: Web framework for backend
+- **SQLite3**: Database management system
+- **Jinja2**: Template engine (integrated with Flask)
+
+### Frontend
+- **HTML5**: Webpage structure
+- **CSS3**: Custom styling
+- **Bootstrap 5.3**: UI framework and responsive design
+- **Font Awesome 6.4**: Icon library
+- **JavaScript**: Client-side interactivity
+
+### Development Tools
+- **Visual Studio Code**: Primary development environment
+- **Git**: Version control
+
+---
+
+## Installation & Setup
+
+### Prerequisites
+- Python 3.7 or higher
+- pip (Python package installer)
+
+### Step 1: Install Required Packages
+
+Navigate to the project directory and install Flask:
+
+```bash
+pip install flask
+```
 
 ## Database Schema
 
