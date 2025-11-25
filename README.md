@@ -1,6 +1,6 @@
 
 # Group-7_FoodConnect-
-FoodConnect is a community driven web platform designed to minimize food waste and promote social impact by connecting suppliers with surplus food to recipients in need, such as shelters, community kitchens, and NGOs. The system enables suppliers to upload details of their available surplus food, while recipients can browse available food surplus listings and submit requests.
+FoodConnect is a community driven web platform designed to minimize food waste and promote social impact by connecting suppliers with surplus food to recipients in need, such as shelters, community kitchens, and NGOs. The system enables suppliers to upload details of their available surplus food and contact details, while recipients can browse available food surplus listings and submit requests.
 
 ## Group 7 Members
 | **Name**         | **Student Number** |
