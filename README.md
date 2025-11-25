@@ -268,22 +268,6 @@ When finished, press `Ctrl + C` in the terminal to stop the Flask server.
    - Enter your email and password
    - You'll be redirected to your dashboard
 
-### Test Credentials
-
-The database includes sample accounts for testing:
-
-**Supplier Accounts:**
-| Email | Password | Name |
-|-------|----------|------|
-| alice@example.com | hashed_password_1 | Alice Smith |
-| bob@example.com   | hashed_password_2 | Bob Johnson |
-
-**Recipient Accounts:**
-| Email | Password | Name |
-|-------|----------|------|
-| carol@example.com | hashed_password_3 | Carol White |
-| dave@example.com  | hashed_password_4 | Dave Brown  |
-
 ### As a Supplier
 
 1. **Login** using supplier credentials
