@@ -27,10 +27,11 @@ FoodConnect is a community driven web platform designed to minimize food waste a
 - Added full recipient workflow pages for dashboard, requests and surplus browsing (recipient-dashboard.html, view-available-surplus.html, uploadrequest.html)
 - Added two new API endpoints in app.py
 
-### Carin de Beer (23757508)
+### Carin de Beer (u23757508)
 - Added test_routes.py for Flask testing
 - Added .gitignore to ignore database, cache and nested repo folder
 - Added extended mock data for suppliers, recipients, requests and surplus (foodconnect.sql)
+- Corrected background image loading via Flask static path (view-recipient-needs.html)
 
 ## Project Purpose
 
