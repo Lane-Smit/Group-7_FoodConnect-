@@ -188,7 +188,6 @@ The database (`foodconnect.db`) is already included with sample data. If you nee
    ```bash
    del foodconnect.db
    ```
-
 2. Create and load the database:
    ```bash
    sqlite3 foodconnect.db < foodconnect.sql
@@ -201,7 +200,6 @@ The database (`foodconnect.db`) is already included with sample data. If you nee
    ```sql
    .read foodconnect.sql
    ```
-
 5. Verify tables were created:
    ```sql
    .tables
@@ -212,7 +210,6 @@ The database (`foodconnect.db`) is already included with sample data. If you nee
    ```sql
    SELECT * FROM users;
    ```
-
 7. Exit SQLite:
    ```sql
    .exit
@@ -404,32 +401,32 @@ erDiagram
 ```
 Group-7_FoodConnect-/
 │
-├── .gitignore                         # Git rules to ignore unnecessary files (cache, DB backups, etc.)
-├── README.md                          # Project documentation and setup instructions
+├── .gitignore                           # Git rules to ignore unnecessary files (cache, DB backups, etc.)
+├── README.md                            # Project documentation and setup instructions
 │
-└── BFB_Supplychain/                   # Main Flask application folder
-    ├── app.py                         # Main Flask backend application (routes, logic, sessions, DB connection)
-    ├── foodconnect.db                 # SQLite database with sample data
-    ├── foodconnect.sql                # SQL schema + mock data for recreating the database
-    ├── test_routes.py                 # Flask route and API testing script
+└── BFB_Supplychain/                     # Main Flask application folder
+    ├── app.py                           # Main Flask backend application (routes, logic, sessions, DB connection)
+    ├── foodconnect.db                    # SQLite database with sample data
+    ├── foodconnect.sql                  # SQL schema + mock data for recreating the database
+    ├── test_routes.py                   # Flask route and API testing script
     │
-    ├── static/                        # Static files served by Flask
-    │   └── images/                    # All website images
-    │       └── background.png         # Website background image
+    ├── static/                            # Static files served by Flask
+    │   └── images/                        # All website images
+    │       └── background.png             # Website background image
     │
-    └── templates/                     # HTML templates rendered by Flask
-        ├── about.html                 # About us information page
-        ├── contact.html               # Contact information page
-        ├── index.html                 # Main landing page (home screen)
-        ├── recipient-dashboard.html   # Dashboard for recipient users (impact + stats)
-        ├── recipientlogin.html        # Login page for recipients
-        ├── signup.html                # User registration (sign up) page
-        ├── supplier-dashboard.html    # Dashboard for supplier users (inventory + stats)
-        ├── supplierlogin.html         # Login page for suppliers
-        ├── uploadfoodsurplus.html     # Form where suppliers upload surplus food
-        ├── uploadrequest.html         # Form where recipients upload food requests
-        ├── view-available-surplus.html# Page to browse all available surplus food
-        └── view-recipient-needs.html  # Page for suppliers to view recipient food requests
+    └── templates/                         # HTML templates rendered by Flask
+        ├── about.html                     # About us information page
+        ├── contact.html                   # Contact information page
+        ├── index.html                     # Main landing page (home screen)
+        ├── recipient-dashboard.html       # Dashboard for recipient users (impact + stats)
+        ├── recipientlogin.html            # Login page for recipients
+        ├── signup.html                    # User registration (sign up) page
+        ├── supplier-dashboard.html        # Dashboard for supplier users (inventory + stats)
+        ├── supplierlogin.html             # Login page for suppliers
+        ├── uploadfoodsurplus.html         # Form where suppliers upload surplus food
+        ├── uploadrequest.html             # Form where recipients upload food requests
+        ├── view-available-surplus.html    # Page to browse all available surplus food
+        └── view-recipient-needs.html      # Page for suppliers to view recipient food requests
 ```
 
 ## Installation and Setup
