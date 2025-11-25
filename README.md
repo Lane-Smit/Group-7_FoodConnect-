@@ -7,7 +7,7 @@ FoodConnect is a community driven web platform designed to minimize food waste a
 |------------------|--------------------|
 | Lané Smit        | u22820737          |
 | Cassidy Thersby  | u22591622          |
-| Carin de Beer    | 23757508           |
+| Carin de Beer    | u23757508           |
 
 ## Team Contributions
 
@@ -638,6 +638,5 @@ The application works with all modern browsers supporting HTML5, CSS3, and JavaS
 - Firefox 88+
 - Safari 14+
 - Edge 90+
-
+  
 ---
-Note: This is a static HTML application. For production use, you would need to add backend functionality for database connectivity and form processing.
