@@ -466,12 +466,6 @@ Group-7_FoodConnect-/
      - Submit food requests
      - Track your requests
 
-### Test Accounts
-You can use the following pre-populated accounts from the mock data:
-- **Email**: alice@example.com | **Password**: hashed_password_1
-- **Email**: bob@example.com | **Password**: hashed_password_2
-- **Email**: carol@example.com | **Password**: hashed_password_3
-
 ## Flask Routes
 
 ### Public Routes
