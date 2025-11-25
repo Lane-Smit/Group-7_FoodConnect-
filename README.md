@@ -7,7 +7,7 @@ FoodConnect is a community driven web platform designed to minimize food waste a
 |------------------|--------------------|
 | Lané Smit        | u22820737          |
 | Cassidy Thersby  | u22591622          |
-| Carin de Beer    | u23757508           |
+| Carin de Beer    | u23757508          |
 
 ## Team Contributions
 
@@ -259,12 +259,12 @@ When finished, press `Ctrl + C` in the terminal to stop the Flask server.
 ### For New Users
 
 1. **Sign Up**:
-   - Click "Sign Up Now" on the home page
+   - Click **"Sign Up Now"** on the home page
    - Fill in your details (name, email, phone, password)
    - Create your account
 
 2. **Login**:
-   - Choose "Supplier Login" or "Recipient Login"
+   - Choose **"Supplier Login"** or **"Recipient Login"**
    - Enter your email and password
    - You'll be redirected to your dashboard
 
@@ -276,13 +276,13 @@ The database includes sample accounts for testing:
 | Email | Password | Name |
 |-------|----------|------|
 | alice@example.com | hashed_password_1 | Alice Smith |
-| bob@example.com | hashed_password_2 | Bob Johnson |
+| bob@example.com   | hashed_password_2 | Bob Johnson |
 
 **Recipient Accounts:**
 | Email | Password | Name |
 |-------|----------|------|
 | carol@example.com | hashed_password_3 | Carol White |
-| dave@example.com | hashed_password_4 | Dave Brown |
+| dave@example.com  | hashed_password_4 | Dave Brown  |
 
 ### As a Supplier
 
@@ -401,14 +401,14 @@ erDiagram
 ```
 Group-7_FoodConnect-/
 │
-├── .gitignore                           # Git rules to ignore unnecessary files (cache, DB backups, etc.)
-├── README.md                            # Project documentation and setup instructions
+├── .gitignore                             # Git rules to ignore unnecessary files (cache, DB backups, etc.)
+├── README.md                              # Project documentation and setup instructions
 │
-└── BFB_Supplychain/                     # Main Flask application folder
-    ├── app.py                           # Main Flask backend application (routes, logic, sessions, DB connection)
-    ├── foodconnect.db                    # SQLite database with sample data
-    ├── foodconnect.sql                  # SQL schema + mock data for recreating the database
-    ├── test_routes.py                   # Flask route and API testing script
+└── BFB_Supplychain/                       # Main Flask application folder
+    ├── app.py                             # Main Flask backend application (routes, logic, sessions, DB connection)
+    ├── foodconnect.db                     # SQLite database with sample data
+    ├── foodconnect.sql                    # SQL schema + mock data for recreating the database
+    ├── test_routes.py                     # Flask route and API testing script
     │
     ├── static/                            # Static files served by Flask
     │   └── images/                        # All website images
